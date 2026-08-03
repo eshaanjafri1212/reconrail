@@ -24,15 +24,15 @@ PostgreSQL · Flowable · Angular · Docker · GitHub Actions · OCI (ARM)
 
 ## Roadmap
 
-| Phase | Scope                                        | Status                           |
-|-------|----------------------------------------------|----------------------------------|
-| 0     | Spec, repo, cloud provisioning, ADRs         | 🟡 90% — VM pending OCI capacity |
-| 1     | Auth service + gateway + CI/CD + live deploy | ⬜                                |
-| 2     | Ingestion + Kafka event backbone             | ⬜                                |
-| 3     | Reconciliation engine                        | ⬜                                |
-| 4     | Workflows + Auto-Claim (the USP)             | ⬜                                |
-| 5     | Real-time dashboard + webhooks + resilience  | ⬜                                |
-| 6     | Observability, load tests, production polish | ⬜                                |
+| Phase | Scope                                        | Status                    |
+|-------|----------------------------------------------|---------------------------|
+| 0     | Spec, repo, cloud provisioning, ADRs         | 🟡 Complete (03 Aug 2026) |
+| 1     | Auth service + gateway + CI/CD + live deploy | ⬜                         |
+| 2     | Ingestion + Kafka event backbone             | ⬜                         |
+| 3     | Reconciliation engine                        | ⬜                         |
+| 4     | Workflows + Auto-Claim (the USP)             | ⬜                         |
+| 5     | Real-time dashboard + webhooks + resilience  | ⬜                         |
+| 6     | Observability, load tests, production polish | ⬜                         |
 
 ## Engineering practices
 
