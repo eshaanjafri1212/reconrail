@@ -1,8 +1,8 @@
 # ReconRail — Master Specification & Journey Document
-**Version:** 0.1.1 (Phase 0 — Foundation Draft)
+**Version:** 0.1.2 (Phase 0 — Foundation Draft)
 **Owner:** Eshaan Abbas Jafri (solo builder, nights & weekends)
 **Status:** Living document — updated at the end of every phase
-**Last updated:** 02 Aug 2026
+**Last updated:** 03 Aug 2026
 
 ---
 
@@ -147,3 +147,8 @@ A small Indian seller selling on Amazon + Flipkart + Meesho + Shopify + quick-co
 ## 6. CHANGELOG
 - **v0.1 (31 Jul 2026):** Initial spec created. Phase 0 begun.
 - v0.1.1 (02 Aug 2026): Confirmed OCI Always Free reduced to 2 OCPU / 12 GB (June 2026 change). Architecture unchanged — NFR-08 already assumed this.
+- **v0.1.2 (03 Aug 2026):** Phase 0 complete — repo + scaffold, OCI VM
+  provisioned (Mumbai, A1.Flex 2/12, Docker installed), reconrail.in live
+  behind Cloudflare (proxied, TLS Full). Provisioning runbook added at
+  docs/runbooks/server-provisioning.md. ADR-002 (Kafka vs Redpanda) remains
+  proposed, due Phase 2.
