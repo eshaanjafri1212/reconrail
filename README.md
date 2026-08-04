@@ -27,7 +27,7 @@ PostgreSQL · Flowable · Angular · Docker · GitHub Actions · OCI (ARM)
 | Phase | Scope                                        | Status                    |
 |-------|----------------------------------------------|---------------------------|
 | 0     | Spec, repo, cloud provisioning, ADRs         | 🟡 Complete (03 Aug 2026) |
-| 1     | Auth service + gateway + CI/CD + live deploy | ⬜                         |
+| 1     | Auth service + gateway + CI/CD + live deploy | In Progress               |
 | 2     | Ingestion + Kafka event backbone             | ⬜                         |
 | 3     | Reconciliation engine                        | ⬜                         |
 | 4     | Workflows + Auto-Claim (the USP)             | ⬜                         |
