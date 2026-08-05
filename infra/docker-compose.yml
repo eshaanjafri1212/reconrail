@@ -6,17 +6,44 @@ services:
     container_name: reconrail-postgres
     environment:
       POSTGRES_USER: reconrail
-      POSTGRES_PASSWORD: localdev
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-localdev}
       POSTGRES_DB: authdb
     ports:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U reconrail -d authdb" ]
+      test: ["CMD-SHELL", "pg_isready -U reconrail -d authdb"]
       interval: 5s
       timeout: 3s
       retries: 10
+    networks: [reconrail-net]
+
+  auth-service:
+    build:
+      context: ../services/auth-service
+    image: reconrail/auth-service:dev
+    container_name: reconrail-auth
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/authdb
+      SPRING_DATASOURCE_USERNAME: reconrail
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-localdev}
+    ports:
+      - "8081:8081"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O - http://localhost:8081/actuator/health/readiness | grep -q UP"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 40s
+    networks: [reconrail-net]
 
 volumes:
   pgdata:
+
+networks:
+  reconrail-net:
+    driver: bridge
