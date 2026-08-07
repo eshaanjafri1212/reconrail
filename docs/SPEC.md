@@ -2,7 +2,7 @@
 **Version:** 0.1.2 (Phase 0 — Foundation Draft)
 **Owner:** Eshaan Abbas Jafri (solo builder, nights & weekends)
 **Status:** Living document — updated at the end of every phase
-**Last updated:** 03 Aug 2026
+**Last updated:** 07 Aug 2026
 
 ---
 
