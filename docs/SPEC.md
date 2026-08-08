@@ -2,7 +2,7 @@
 **Version:** 0.1.2 (Phase 0 — Foundation Draft)
 **Owner:** Eshaan Abbas Jafri (solo builder, nights & weekends)
 **Status:** Living document — updated at the end of every phase
-**Last updated:** 07 Aug 2026
+**Last updated:** 08 Aug 2026
 
 ---
 
@@ -152,3 +152,4 @@ A small Indian seller selling on Amazon + Flipkart + Meesho + Shopify + quick-co
   behind Cloudflare (proxied, TLS Full). Provisioning runbook added at
   docs/runbooks/server-provisioning.md. ADR-002 (Kafka vs Redpanda) remains
   proposed, due Phase 2.
+- v0.1.3 (08 Aug 2026): Setting up of TLS setup.
