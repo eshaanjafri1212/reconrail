@@ -304,6 +304,19 @@ Other genuine ones worth having ready:
 > soon run several services. Nginx also gives me a place to do blue-green
 > deployments later by switching upstreams.
 
+### "Describe your CI/CD pipeline."
+
+> Every pull request triggers a build on a clean Ubuntu runner: it installs
+> JDK 21, runs `mvnw clean verify` against a real PostgreSQL service container,
+> and the check is required before merge. On merge to main, a second job builds
+> a multi-architecture image with buildx and QEMU — the runners are x86 but the
+> production host is ARM — and pushes it to GitHub Container Registry tagged
+> with the commit SHA. A third job then SSHes to the server using a dedicated
+> deploy key, pins that SHA in the environment file, pulls and restarts the
+> containers, and polls the readiness endpoint for up to two minutes, failing
+> the workflow if the service never reports healthy. So a deployment is only
+> "successful" if the application actually came up, not merely if the commands
+> ran. Rollback is changing one line to a previous SHA and re-running.
 ### "What would you change to scale this?"
 
 > The single VM is the obvious bottleneck and a single point of failure. First

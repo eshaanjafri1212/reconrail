@@ -81,8 +81,8 @@ Generate the DB password with `openssl rand -base64 24`.
 
 ---
 
-## 4. Manual deploy (current process)
-
+## 4. Manual deploy  and Automated deploy (normal path)
+merge to main → CI tests → publishes multi-arch image → deploy job SSHes in, pins IMAGE_TAG to the commit SHA in .env, pulls, restarts, prunes old images, and polls the readiness endpoint for up to 120s, failing the workflow if it never goes healthy. Note the credential model: a dedicated deploy key (not your personal key) whose private half lives in VM_SSH_KEY, plus VM_HOST and VM_USER secrets.
 ```bash
 # [LOCAL] connect
 ssh -i ~/.ssh/reconrail_oci ubuntu@130.210.49.228
@@ -94,6 +94,7 @@ docker compose up -d
 docker compose ps            # both services should read: Up (healthy)
 curl http://127.0.0.1:8081/actuator/health
 ```
+the existing commands, reframed as what you do when CI is unavailable or when rolling back — set IMAGE_TAG to a previous known-good SHA and re-run docker compose pull && up -d.
 
 To deploy a specific commit rather than `latest`, set `IMAGE_TAG=<sha>` in
 `.env` before `docker compose pull`. This is also the rollback procedure:
@@ -249,3 +250,11 @@ Never guess which layer is broken — narrow it down mechanically.
    app authenticated against the wrong database while the Docker container sat
    idle. Diagnosed with `netstat -ano | findstr :5432` then
    `Get-Process -Id <PID>`.
+7. **`ssh: handshake failed ... [none publickey]` in the deploy job** — the
+      deploy key wasn't authorized on the server. Root cause was comical but
+      instructive: the literal placeholder text `PASTE_THE_PUBLIC_KEY_LINE_HERE`
+      had been appended to `authorized_keys` instead of the actual key. Diagnosed
+      by testing the key manually first (`ssh -i ~/.ssh/reconrail_deploy ...`),
+      which proved the failure was server-side rather than a GitHub secret
+      formatting problem, then reading `cat -n ~/.ssh/authorized_keys`.
+      *Lesson:* verify a credential works by hand before handing it to automation.
