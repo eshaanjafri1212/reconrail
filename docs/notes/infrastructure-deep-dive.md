@@ -324,6 +324,16 @@ Other genuine ones worth having ready:
 > anywhere. That's service discovery in its simplest form; the same conceptual
 > role Eureka or Consul would play in a larger deployment.
 
+- **A public IP that wouldn't attach.** The create-instance form silently
+  refused to assign a public IPv4 address, and afterwards the VNIC showed
+  "not assigned" with no error explaining why. The UI gave no useful signal, so
+  I reasoned from first principles about what makes a subnet genuinely public:
+  it needs an internet gateway, a route rule sending 0.0.0.0/0 to that gateway,
+  and a public IP on the VNIC. The gateway existed but nothing routed to it —
+  a door with no road leading to it — so the platform correctly refused to
+  assign an address that could never have worked. *The point:* the error
+  message was useless, but knowing the three required components made the
+  missing one obvious.
 ---
 
 ## Part 4 — Quick reference
