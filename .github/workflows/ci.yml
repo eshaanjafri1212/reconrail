@@ -83,3 +83,26 @@ jobs:
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
+  deploy:
+    name: Deploy to production
+    needs: publish-image
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy over SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USER }}
+          key: ${{ secrets.VM_SSH_KEY }}
+          script: |
+            set -e
+            cd ~/reconrail
+            export IMAGE_TAG=${{ github.sha }}
+            sed -i "s/^IMAGE_TAG=.*/IMAGE_TAG=${{ github.sha }}/" .env
+            docker compose pull
+            docker compose up -d
+            docker image prune -f
+            timeout 120 bash -c 'until curl -sf http://127.0.0.1:8081/actuator/health/readiness | grep -q UP; do sleep 5; done'
+            echo "Deployment verified healthy"
