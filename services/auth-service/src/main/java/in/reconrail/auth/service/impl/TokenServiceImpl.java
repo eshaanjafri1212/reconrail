@@ -125,7 +125,6 @@ public class TokenServiceImpl implements TokenService {
                 Long.valueOf(claims.getSubject()),
                 claims.get("tid", Long.class),
                 claims.get("tsl", String.class),
-                null,                                        // email not carried as a claim
                 UserRole.valueOf(claims.get("rol", String.class))
         );
     }
