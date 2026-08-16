@@ -23,3 +23,12 @@ management:
     health:
       probes:
         enabled: true
+reconrail:
+  jwt:
+    issuer: reconrail-auth
+    audience: reconrail-api
+    access-token-ttl: PT15M
+    refresh-token-ttl: P30D
+    private-key: ${JWT_PRIVATE_KEY:classpath:keys/private.pem}
+    public-key: ${JWT_PUBLIC_KEY:classpath:keys/public.pem}
+    key-id: reconrail-key-1

@@ -41,6 +41,9 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
+      - name: Generate throwaway RSA keys for tests
+        run: bash scripts/generate-dev-keys.sh
+
       - name: Build and test
         working-directory: services/auth-service
         run: ./mvnw -B clean verify
