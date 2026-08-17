@@ -7,6 +7,7 @@
 
 🚧 In active development. Started Aug 2026. [Live demo — coming Phase 1]
 
+"Local setup" section: clone → bash scripts/generate-dev-keys.sh → docker compose up -d postgres → mvn spring-boot:run
 ## The problem
 
 Small Indian sellers on Amazon, Flipkart, Meesho, quick-commerce, and ONDC
