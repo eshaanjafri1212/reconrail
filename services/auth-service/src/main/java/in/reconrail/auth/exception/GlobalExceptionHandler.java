@@ -28,4 +28,13 @@ public class GlobalExceptionHandler {
         problem.setTitle("Validation failed");
         return problem;
     }
+
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ProblemDetail handleInvalidCredentials(InvalidCredentialsException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.UNAUTHORIZED, "Invalid credentials");
+        problem.setTitle("Authentication failed");
+        return problem;
+    }
+
 }
