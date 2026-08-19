@@ -1,8 +1,8 @@
 # ReconRail — Master Specification & Journey Document
-**Version:** 0.1.2 (Phase 0 — Foundation Draft)
+**Version:** 0.2 (Phase 1 — in progress)
 **Owner:** Eshaan Abbas Jafri (solo builder, nights & weekends)
 **Status:** Living document — updated at the end of every phase
-**Last updated:** 08 Aug 2026
+**Last updated:** 19 Aug 2026
 
 ---
 
@@ -77,33 +77,33 @@ A small Indian seller selling on Amazon + Flipkart + Meesho + Shopify + quick-co
 3. **ingestion-service:** file upload, parser registry (strategy pattern, versioned parsers), publishes normalized events → Kafka
 4. **recon-engine:** Kafka consumer; matching rules; Redis-cached lookups; writes immutable ledger — PostgreSQL
 5. **workflow-service:** Flowable engine; exception queues; Auto-Claim lifecycle; SLA timers
-6. **realtime-notify-service:** Kafka consumer → WebSocket push (Money Leak Meter) + email + outbound webhooks (HMAC, retry with backoff, dead-letter)
+6. **notify-service:** Kafka consumer → WebSocket push (Money Leak Meter) + email + outbound webhooks (HMAC, retry with backoff, dead-letter)
 7. **frontend:** Angular SPA (hosted free on Vercel/Render static)
 
 *(Reporting lives inside recon-engine initially; split later. Service registry: start with Docker DNS + Gateway routes; introduce Eureka/Consul in Phase 5 as a learning exercise, documented honestly as such.)*
 
 ### 3.2 Key patterns & concepts we will implement (the curriculum)
-| Concept | Where it's used |
-|---------|----------------|
-| Event-driven architecture, Kafka topics/partitions/consumer groups | ingestion → recon pipeline |
-| Transactional Outbox pattern | reliable event publish from recon-engine |
-| Idempotent consumers, exactly-once semantics (practical) | recon-engine |
-| Saga (choreography) | claim lifecycle across services |
-| Strategy + Factory patterns | marketplace parser registry |
-| State machine / workflow engine | Flowable claim & exception flows |
-| CQRS-lite (read models) | dashboard aggregates |
-| Caching (cache-aside, TTL, invalidation) | Redis in recon-engine |
-| WebSockets (STOMP over Spring) | Money Leak Meter |
-| Webhooks (in + out, HMAC signing, retries, DLQ) | notify-service, Shopify inbound |
-| API Gateway, rate limiting, circuit breaker (Resilience4j) | edge + inter-service calls |
-| Service registry & discovery (Eureka) | Phase 5 learning module |
-| Load balancing (Nginx upstream + client-side via Spring Cloud LoadBalancer) | Phase 5 |
-| Multi-tenancy (shared schema, tenant_id discriminator + row-level checks) | all services |
-| Database: indexing, partitioning ledger by month, query plans | PostgreSQL |
-| Zero-downtime deploys (blue-green via Nginx), DB migrations (Flyway) | CI/CD |
-| Observability: Prometheus, Grafana, structured logging, correlation IDs | all |
-| Load testing (k6/Gatling) + publishing p95 numbers | Phase 6 |
-
+| Concept                                                                                | Where it's used |
+|----------------------------------------------------------------------------------------|----------------|
+| Event-driven architecture, Kafka topics/partitions/consumer groups                     | ingestion → recon pipeline |
+| Transactional Outbox pattern                                                           | reliable event publish from recon-engine |
+| Idempotent consumers, exactly-once semantics (practical)                               | recon-engine |
+| Saga (choreography)                                                                    | claim lifecycle across services |
+| Strategy + Factory patterns                                                            | marketplace parser registry |
+| State machine / workflow engine                                                        | Flowable claim & exception flows |
+| CQRS-lite (read models)                                                                | dashboard aggregates |
+| Caching (cache-aside, TTL, invalidation)                                               | Redis in recon-engine |
+| WebSockets (STOMP over Spring)                                                         | Money Leak Meter |
+| Webhooks (in + out, HMAC signing, retries, DLQ)                                        | notify-service, Shopify inbound |
+| API Gateway, rate limiting, circuit breaker (Resilience4j)                             | edge + inter-service calls |
+| Service registry & discovery (Eureka)                                                  | Phase 5 learning module |
+| Load balancing (Nginx upstream + client-side via Spring Cloud LoadBalancer)            | Phase 5 |
+| Multi-tenancy (shared schema, tenant_id discriminator + row-level checks)              | all services |
+| Database: indexing, partitioning ledger by month, query plans                          | PostgreSQL |
+| Zero-downtime deploys (blue-green via Nginx), DB migrations (Flyway)                   | CI/CD |
+| Observability: Prometheus, Grafana, structured logging, correlation IDs                | all |
+| Stateless authentication (JWT), refresh token rotation with reuse detection            | auth-service |
+| Build-once-deploy-many, multi-arch images (QEMU + buildx)                              | CI/CD |
 ### 3.3 Deployment topology
 - **Compute:** Oracle Always Free ARM VM (2 OCPU / 12 GB) — Docker Compose; JVM heaps capped (~256m/service); single-broker Kafka **or Redpanda** (lighter on ARM — decide in Phase 1 via a short ADR)
 - **Frontend:** Vercel/Render free static
@@ -152,4 +152,22 @@ A small Indian seller selling on Amazon + Flipkart + Meesho + Shopify + quick-co
   behind Cloudflare (proxied, TLS Full). Provisioning runbook added at
   docs/runbooks/server-provisioning.md. ADR-002 (Kafka vs Redpanda) remains
   proposed, due Phase 2.
-- v0.1.3 (08 Aug 2026): Setting up of TLS setup.
+- **v0.1.3 (08 Aug 2026):** Nginx reverse proxy with Cloudflare Origin
+  Certificate; TLS mode raised to Full (strict). Four-layer firewall model
+  documented (Cloudflare → OCI security list → NSG → host iptables).
+- **v0.2 (19 Aug 2026):** Phase 1 authentication complete.
+  - ADR-003 (multi-tenancy: shared schema + tenant_id, three enforcement
+    layers) and ADR-004 (authentication: JWT, RS256, 15m access / 30d rotating
+    refresh, httpOnly cookie, gateway+service enforcement) accepted.
+  - auth-service: registration, login, RS256 JWT issue/verify, refresh tokens
+    with family-based rotation, Spring Security filter chain, RFC 7807 error
+    responses. Migrations V001–V003.
+  - CI/CD complete: PR gate (build + test against a real Postgres), multi-arch
+    image published to ghcr.io tagged by commit SHA, automated SSH deploy with
+    readiness verification and rollback by tag.
+  - Secrets: RSA keys generated per environment, never committed; production
+    keys mounted read-only into the container under a pinned UID.
+  - Checkpoint notes added at docs/notes/.
+  - **Still open in Phase 1:** tenant context enforcement (ThreadLocal +
+    Hibernate @Filter + PostgreSQL RLS), Spring Cloud Gateway, integration
+    tests including negative tenant-isolation tests.
