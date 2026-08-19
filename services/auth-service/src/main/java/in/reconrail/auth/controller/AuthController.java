@@ -2,6 +2,7 @@ package in.reconrail.auth.controller;
 
 import in.reconrail.auth.config.JwtProperties;
 import in.reconrail.auth.dto.*;
+import in.reconrail.auth.security.AuthenticatedPrincipal;
 import in.reconrail.auth.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -10,10 +11,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -63,5 +62,11 @@ public class AuthController {
             return forwarded.split(",")[0].trim();
         }
         return request.getRemoteAddr();
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<AuthenticatedPrincipal> me(
+            @AuthenticationPrincipal AuthenticatedPrincipal principal) {
+        return ResponseEntity.ok(principal);
     }
 }
