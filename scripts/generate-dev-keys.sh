@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Generates a development RSA key pair for auth-service.
 # These keys are gitignored and MUST NOT be used in production.
+#abcd
 set -euo pipefail
 
 KEY_DIR="services/auth-service/src/main/resources/keys"
