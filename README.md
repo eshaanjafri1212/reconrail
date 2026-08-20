@@ -1,7 +1,7 @@
 # ReconRail
 
 > Settlement reconciliation and money-recovery engine for Indian multi-channel
-> sellers. It doesn't just find where your money leaked — it gets it back.
+> sellers. It doesn't just find where your money leaked — it gets it back .
 
 **Detect → Explain → Recover.**
 
