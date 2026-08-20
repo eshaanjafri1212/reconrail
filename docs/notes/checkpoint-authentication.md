@@ -3,7 +3,7 @@
 **Completed:** 19 Aug 2026
 **Covers:** registration, login, JWT issuance and verification, refresh tokens,
 the security filter chain, and production key management.
-**Related:** ADR-0003 (multi-tenancy), ADR-0004 (authentication architecture).
+**Related:** ADR-0003 (multi-tenancy), ADR-0004 (authentication architecture) .
 
 ---
 
