@@ -2,11 +2,17 @@ package in.reconrail.auth.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.ParamDef;
 
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Entity
+@FilterDef(name = "tenantFilter",
+        parameters = @ParamDef(name = "tenantId", type = Long.class))
+@Filter(name = "tenantFilter", condition = "tenant_id = :tenantId")
 @Table(name = "refresh_token")
 @Getter
 @Setter

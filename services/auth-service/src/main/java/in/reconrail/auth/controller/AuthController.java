@@ -2,11 +2,15 @@ package in.reconrail.auth.controller;
 
 import in.reconrail.auth.config.JwtProperties;
 import in.reconrail.auth.dto.*;
+import in.reconrail.auth.entity.AppUser;
+import in.reconrail.auth.repository.AppUserRepository;
 import in.reconrail.auth.security.AuthenticatedPrincipal;
+import in.reconrail.auth.security.TenantContext;
 import in.reconrail.auth.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
@@ -14,6 +18,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
@@ -21,6 +28,7 @@ public class AuthController {
 
     private final AuthService authService;
     private final JwtProperties jwtProperties;
+    private final AppUserRepository userRepository;
 
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request){
@@ -67,6 +75,12 @@ public class AuthController {
     @GetMapping("/me")
     public ResponseEntity<AuthenticatedPrincipal> me(
             @AuthenticationPrincipal AuthenticatedPrincipal principal) {
+        log.info("Tenant Context:: {}", TenantContext.getTenantId());
         return ResponseEntity.ok(principal);
+    }
+    @GetMapping("/debug/users")
+    public ResponseEntity<List<String>> listUsers() {
+        return ResponseEntity.ok(
+                userRepository.findAll().stream().map(AppUser::getEmail).toList());
     }
 }
