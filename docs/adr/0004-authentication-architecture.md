@@ -95,6 +95,7 @@ costs one afternoon.
 More moving parts than a shared secret, and services must handle JWKS fetch
 failure (cache the key; fail closed on verification, not open).
 
+"Bad": services requiring the caller's email must perform a lookup by user id rather than reading it from the token.
 ---
 
 ## Decision 3: 15-minute access tokens, 30-day rotating refresh tokens
@@ -200,6 +201,17 @@ rol   "TENANT_ADMIN"        role — see the staleness note below
 Password hashes, any payment or settlement data, full names, phone numbers —
 none of it is needed for an authorization decision, and each additional field
 is data leaked to anyone who obtains the token.
+
+### Explicitly excluded
+
+Password hashes, any payment or settlement data, phone numbers, and **email
+addresses** — none is needed to make an authorization decision, and every
+additional claim is data handed to anyone who obtains the token. Email is
+excluded deliberately even though it is convenient: a JWT is signed, not
+encrypted, so its payload is readable by any party that intercepts or stores
+it, and an access token that leaks would otherwise disclose the account's
+email address alongside its identifiers. Where a service needs the email, it
+resolves it from the user id in the `sub` claim.
 
 ### The staleness trade-off
 

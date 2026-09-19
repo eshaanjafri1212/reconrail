@@ -43,10 +43,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
+            TenantContext.setTenantId(principal.tenantId());
         }
         catch(Exception ex){
             SecurityContextHolder.clearContext();
         }
-        filterChain.doFilter(request,response);
+        try {
+            filterChain.doFilter(request, response);
+        }finally {
+            TenantContext.clear();
+        }
     }
 }
