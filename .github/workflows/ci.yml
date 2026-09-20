@@ -106,6 +106,6 @@ jobs:
             sed -i "s/^IMAGE_TAG=.*/IMAGE_TAG=${{ github.sha }}/" .env
             docker compose pull
             docker compose up -d
-            docker image prune -f
+            docker image prune -af --filter "until=168h"
             timeout 120 bash -c 'until curl -sf http://127.0.0.1:8081/actuator/health/readiness | grep -q UP; do sleep 5; done'
             echo "Deployment verified healthy"

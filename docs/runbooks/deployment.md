@@ -158,6 +158,25 @@ sudo nginx -t
 sudo systemctl reload nginx
 ```
 
+## Exposing a new API path
+
+Nginx only proxies paths it has been told about. To expose a new one:
+
+1. `[VM]` edit `/etc/nginx/conf.d/reconrail.conf`, add a `location` block
+   with `proxy_pass` to the service's localhost port and the four
+   `proxy_set_header` lines (Host, X-Real-IP, X-Forwarded-For,
+   X-Forwarded-Proto).
+2. `[VM]` `sudo nginx -t && sudo systemctl reload nginx` — always test first;
+   a bad config on a live server means downtime. `reload` applies changes
+   without dropping existing connections, unlike `restart`.
+3. Verify end to end from outside: `curl https://reconrail.in/<path>`.
+
+Currently exposed: `/actuator/health`, `/api/`.
+
+**Note:** `/api/v1/auth/register` is publicly reachable with no rate limiting.
+Anyone who finds it can create unlimited tenants. Rate limiting arrives with
+Spring Cloud Gateway; until then this is an accepted, temporary exposure.
+
 ### TLS: Cloudflare Origin Certificate
 
 Traffic has two legs. Browser→Cloudflare is encrypted with Cloudflare's public
