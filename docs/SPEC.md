@@ -171,3 +171,8 @@ A small Indian seller selling on Amazon + Flipkart + Meesho + Shopify + quick-co
   - **Still open in Phase 1:** tenant context enforcement (ThreadLocal +
     Hibernate @Filter + PostgreSQL RLS), Spring Cloud Gateway, integration
     tests including negative tenant-isolation tests.
+- **v0.3 (22 Sep 2026):** Tenant isolation enforced (ADR-0003, all three
+    layers): ThreadLocal tenant context, Hibernate filter via AOP aspect,
+    PostgreSQL row-level security with a restricted application role
+    (migrations V004–V005). Verified by negative tests: zero rows without
+    tenant context, and no cross-tenant access by primary key.

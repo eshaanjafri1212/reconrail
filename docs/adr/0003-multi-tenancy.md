@@ -149,6 +149,17 @@ fail.
   data residency; (b) the ledger table's growth makes tenant-scoped queries
   slow despite indexing; (c) one tenant's volume measurably degrades others.
 
+### Implementation notes (added 22 Sep 2026)
+
+- Layer 3 requires the application to connect as a non-superuser role.
+  Superusers bypass RLS unconditionally, and the official PostgreSQL image
+  creates its default user as a superuser. The app connects as
+  `reconrail_app` (NOSUPERUSER, NOBYPASSRLS, DML only); Flyway runs as the
+  owner.
+- Legitimate cross-tenant work (background jobs, analytics, admin tooling)
+  will use a separate BYPASSRLS role rather than a policy flag.
+- Cost: two database credentials per environment.
+
 ### Migration path if revisited
 
 The options are not mutually exclusive permanently. The expected progression is:
