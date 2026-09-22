@@ -2,10 +2,12 @@ package in.reconrail.auth.security;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.hibernate.Session;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 /**
@@ -25,9 +27,13 @@ import org.springframework.stereotype.Component;
 @Aspect
 @Component
 @Slf4j
+@RequiredArgsConstructor
+@Order(1)
 public class TenantFilterAspect {
     @PersistenceContext
     private EntityManager entityManager;
+
+    private final TenantSessionConfigurer tenantSessionConfigurer;
 
     @Before("execution(* in.reconrail.auth.service.impl.*.*(..))")
     public void enableTenantFilter(){
@@ -41,5 +47,7 @@ public class TenantFilterAspect {
         entityManager.unwrap(Session.class)
                 .enableFilter("tenantFilter")
                 .setParameter("tenantId",tenantId);
+
+        tenantSessionConfigurer.applyTenant(tenantId);
     }
 }

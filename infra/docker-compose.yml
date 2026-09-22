@@ -29,8 +29,8 @@ services:
         condition: service_healthy
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/authdb
-      SPRING_DATASOURCE_USERNAME: reconrail
-      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-localdev}
+      DB_APP_PASSWORD: localdev_app
+      DB_MIGRATION_PASSWORD: ${POSTGRES_PASSWORD:-localdev}
     ports:
       - "8081:8081"
     healthcheck:

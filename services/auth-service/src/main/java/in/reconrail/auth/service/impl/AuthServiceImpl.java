@@ -12,6 +12,7 @@ import in.reconrail.auth.exception.InvalidCredentialsException;
 import in.reconrail.auth.repository.AppUserRepository;
 import in.reconrail.auth.repository.RefreshTokenRepository;
 import in.reconrail.auth.repository.TenantRepository;
+import in.reconrail.auth.security.TenantSessionConfigurer;
 import in.reconrail.auth.service.AuthService;
 import in.reconrail.auth.service.TokenService;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,6 +36,7 @@ public class AuthServiceImpl implements AuthService {
     private final TokenService tokenService;
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtProperties jwtProperties;
+    private final TenantSessionConfigurer tenantSessionConfigurer;
 
 
     @Override
@@ -52,6 +54,7 @@ public class AuthServiceImpl implements AuthService {
                         .status(TenantStatus.ACTIVE)
                         .build());
 
+        tenantSessionConfigurer.applyTenant(tenant.getId());
         String email = request.email().trim().toLowerCase(Locale.ROOT);
 
         AppUser user = userRepository.save(
@@ -87,7 +90,11 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     public LoginResponse login(LoginRequest request, String userAgent, String ipAddress){
         String email = request.email().trim().toLowerCase(Locale.ROOT);
+
         Optional<Tenant> tenantOpt = tenantRepository.findBySlug(request.tenantSlug());
+
+        tenantOpt.ifPresent(t -> tenantSessionConfigurer.applyTenant(t.getId()));
+
         Optional<AppUser> userOpt = tenantOpt.flatMap(
                 t -> userRepository.findByTenantIdAndEmail(t.getId() , email)
         );

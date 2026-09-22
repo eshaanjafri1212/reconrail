@@ -3,13 +3,20 @@ spring:
     name: auth-service
   datasource:
     url: jdbc:postgresql://localhost:5432/authdb
-    username: reconrail
-    password: localdev
+#    username: reconrail
+#    password: localdev
+    username: ${DB_APP_USER:reconrail_app}
+    password: ${DB_APP_PASSWORD:localdev_app}
   jpa:
     hibernate:
       ddl-auto: validate
   flyway:
     enabled: true
+    user: ${DB_MIGRATION_USER:reconrail}
+    password: ${DB_MIGRATION_PASSWORD:localdev}
+    placeholders:
+      # Substituted into V005 so the app role's password never appears in SQL.
+      appDbPassword: ${DB_APP_PASSWORD:localdev_app}
 
 server:
   port: 8081
